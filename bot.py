@@ -13,6 +13,8 @@ import os
 import json
 from datetime import datetime
 
+# TODO добавить таймер. Запоминать время последнего редактирования каждого сообщения. Если оно превышает минуту, и это вообщение все еще доступно в дискорде, то изменить его на "НЕ ОТВЕЧАЕТ"
+# TODO добавить ключ для вебсокета
 async def SendServerStatusMessage(json_data):
     data = json.loads(json_data)
     channel = client.get_channel(int(data[0]))
