@@ -96,4 +96,4 @@ print("server status websocket started")
 # asyncio.get_event_loop().run_forever()
 
 
-client.run("NTE0Mzg3ODY0NjUwNTE0NDY3.W_PjBw.JobYGIGB3SnUVg6KPywZY4OCloM")
+client.run(TOKEN)
