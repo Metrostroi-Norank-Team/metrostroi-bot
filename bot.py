@@ -67,6 +67,8 @@ client = discord.Client()
 
 channels_messages_ips_json = None
 channels_messages_ips = None
+# создаю файл, если его нет
+f = open("channels_messages_ips.txt", "w")
 with open("channels_messages_ips.txt", "r",encoding='utf-8') as read_file:
     string = read_file.read()
     if len(string) > 0:
