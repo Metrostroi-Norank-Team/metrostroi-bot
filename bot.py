@@ -90,7 +90,7 @@ async def echo(websocket, path):
             await SendServerStatusMessage(message)
     except:
         None
-start_server = websockets.serve(echo, "0.0.0.0", env.PORT)
+start_server = websockets.serve(echo, "0.0.0.0", os.environ['PORT'])
 asyncio.get_event_loop().run_until_complete(start_server)
 print("server status websocket started")
 # asyncio.get_event_loop().run_forever()
