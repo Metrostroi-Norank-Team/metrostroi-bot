@@ -43,7 +43,7 @@ async def SendServerStatusMessage(json_data):
 
     if msg:
         embed = discord.Embed(color=0x00ff00)
-        embed.set_footer(text = "Актуально на " + datetime.strftime(datetime.now(),"%H:%M:%S %d.%m.%Y") + " (МСК)")
+        embed.set_footer(text = "Актуально на " + datetime.strftime(datetime.now(),"%H:%M:%S %d.%m.%Y") + " (не МСК)")
         embed.add_field(name="Сервер:", value=data[1], inline=False)
         embed.add_field(name="Карта:", value=data[3], inline=True)
         embed.add_field(name="Вагоны:", value=data[5], inline=True)
