@@ -17,6 +17,7 @@ from datetime import datetime
 # TODO добавить ключ для вебсокета
 # TODO сделать, чтобы каждое сообщение дискорде не дрочилось чаще, чем раз в 10 секунд
 # TODO баны, анбаны, вызов луастрингов на сервере гмода
+# TODO ради дивана сортировка статусов серверов в каждом канале по имени
 async def SendServerStatusMessage(json_data):
     data = json.loads(json_data)
     channel = client.get_channel(int(data[0]))
