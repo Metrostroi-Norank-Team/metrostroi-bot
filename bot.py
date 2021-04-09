@@ -13,6 +13,8 @@ import os
 import json
 from datetime import datetime
 
+# TODO добавить таймер. Запоминать время последнего редактирования каждого сообщения. Если оно превышает минуту, и это вообщение все еще доступно в дискорде, то изменить его на "НЕ ОТВЕЧАЕТ"
+# TODO добавить ключ для вебсокета
 async def SendServerStatusMessage(json_data):
     data = json.loads(json_data)
     channel = client.get_channel(int(data[0]))
@@ -43,7 +45,7 @@ async def SendServerStatusMessage(json_data):
 
     if msg:
         embed = discord.Embed(color=0x00ff00)
-        embed.set_footer(text = "Актуально на " + datetime.strftime(datetime.now(),"%H:%M:%S %d.%m.%Y") + " (МСК)")
+        embed.set_footer(text = "Актуально на " + datetime.strftime(datetime.now(),"%H:%M:%S %d.%m.%Y") + " (не МСК)")
         embed.add_field(name="Сервер:", value=data[1], inline=False)
         embed.add_field(name="Карта:", value=data[3], inline=True)
         embed.add_field(name="Вагоны:", value=data[5], inline=True)
@@ -65,6 +67,8 @@ client = discord.Client()
 
 channels_messages_ips_json = None
 channels_messages_ips = None
+# создаю файл, если его нет
+f = open("channels_messages_ips.txt", "w")
 with open("channels_messages_ips.txt", "r",encoding='utf-8') as read_file:
     string = read_file.read()
     if len(string) > 0:
