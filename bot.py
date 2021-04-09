@@ -15,6 +15,7 @@ from datetime import datetime
 
 # TODO добавить таймер. Запоминать время последнего редактирования каждого сообщения. Если оно превышает минуту, и это вообщение все еще доступно в дискорде, то изменить его на "НЕ ОТВЕЧАЕТ"
 # TODO добавить ключ для вебсокета
+# TODO сделать, чтобы каждое сообщение дискорде не дрочилось чаще, чем раз в 10 секунд
 async def SendServerStatusMessage(json_data):
     data = json.loads(json_data)
     channel = client.get_channel(int(data[0]))
@@ -68,8 +69,7 @@ client = discord.Client()
 channels_messages_ips_json = None
 channels_messages_ips = None
 # создаю файл, если его нет
-f = open("channels_messages_ips.txt", "w")
-with open("channels_messages_ips.txt", "r",encoding='utf-8') as read_file:
+with open("channels_messages_ips.txt", "rw",encoding='utf-8') as read_file:
     string = read_file.read()
     if len(string) > 0:
         channels_messages_ips = json.loads(string)
