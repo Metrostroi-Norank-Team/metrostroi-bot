@@ -5,6 +5,7 @@ import discord
 import websockets
 import os
 import json
+import psycopg2
 from datetime import datetime
 import pytz
 
@@ -12,6 +13,12 @@ selector = selectors.SelectSelector()
 loop = asyncio.SelectorEventLoop(selector)
 asyncio.set_event_loop(loop)
 
+# Connection to Postgresql DB
+conn = psycopg2.connect(os.environ['DATABASE_URL'], sslmode='require')
+
+# Legacy
+channels_messages_ips_json = None
+channels_messages_ips = None
 
 # TODO добавить таймер. Запоминать время последнего редактирования каждого сообщения.
 #   Если оно превышает минуту, и это вообщение все еще доступно в дискорде, то изменить его на "НЕ ОТВЕЧАЕТ"
@@ -19,6 +26,17 @@ asyncio.set_event_loop(loop)
 # TODO сделать, чтобы каждое сообщение дискорде не дрочилось чаще, чем раз в 10 секунд
 # TODO баны, анбаны, вызов луастрингов на сервере гмода
 # TODO ради дивана сортировка статусов серверов в каждом канале по имени
+
+# =============================
+# |         JSON_DATA         |
+# | 0    => Message Channel   |
+# | 1    => Server's Name     |
+# | 2    => IP:PORT           |
+# | 3    => Map               |
+# | 4    => Max players       |
+# | 5    => Cur/Max wagons    |
+# | 6    => Player's list     |
+# =============================
 
 
 async def send_server_status_message(json_data):
@@ -72,16 +90,7 @@ async def send_server_status_message(json_data):
 
 client = discord.Client()
 
-channels_messages_ips_json = None
-channels_messages_ips = None
 
-file_mode = 'r' if os.path.isfile('channels_messages_ips.txt') else 'w+'
-with open("channels_messages_ips.txt", file_mode, encoding='utf-8') as read_file:
-    string = read_file.read()
-    if len(string) > 0:
-        channels_messages_ips = json.loads(string)
-    else:
-        channels_messages_ips = {}
 
 botReady = False
 
