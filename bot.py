@@ -6,6 +6,7 @@ import websockets
 import os
 import json
 from datetime import datetime
+import pytz
 
 selector = selectors.SelectSelector()
 loop = asyncio.SelectorEventLoop(selector)
@@ -50,7 +51,9 @@ async def send_server_status_message(json_data):
 
     if msg:
         embed = discord.Embed(color=0x00ff00)
-        embed.set_footer(text="Актуально на " + datetime.strftime(datetime.now(), "%H:%M:%S %d.%m.%Y") + " (МСК)")
+        fmt = '%d.%m.%Y %H:%M:%S %Z%z'
+        loc_dt = pytz.timezone('Europe/Moscow').localize(datetime.now())
+        embed.set_footer(text="Актуально на " + loc_dt.strftime(fmt))
         embed.add_field(name="Сервер:", value=data[1], inline=False)
         embed.add_field(name="Карта:", value=data[3], inline=True)
         embed.add_field(name="Вагоны:", value=data[5], inline=True)
