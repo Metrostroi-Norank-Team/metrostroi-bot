@@ -1,27 +1,30 @@
 # -*- coding: utf-8 -*-
 import asyncio
 import selectors
-
-selector = selectors.SelectSelector()
-loop = asyncio.SelectorEventLoop(selector)
-asyncio.set_event_loop(loop)
-
 import discord
 import websockets
 import os
 import json
 from datetime import datetime
 
-# TODO добавить таймер. Запоминать время последнего редактирования каждого сообщения. Если оно превышает минуту, и это вообщение все еще доступно в дискорде, то изменить его на "НЕ ОТВЕЧАЕТ"
+selector = selectors.SelectSelector()
+loop = asyncio.SelectorEventLoop(selector)
+asyncio.set_event_loop(loop)
+
+
+# TODO добавить таймер. Запоминать время последнего редактирования каждого сообщения.
+#   Если оно превышает минуту, и это вообщение все еще доступно в дискорде, то изменить его на "НЕ ОТВЕЧАЕТ"
 # TODO добавить ключ для вебсокета
 # TODO сделать, чтобы каждое сообщение дискорде не дрочилось чаще, чем раз в 10 секунд
 # TODO баны, анбаны, вызов луастрингов на сервере гмода
 # TODO ради дивана сортировка статусов серверов в каждом канале по имени
-async def SendServerStatusMessage(json_data):
+
+
+async def send_server_status_message(json_data):
     data = json.loads(json_data)
     channel = client.get_channel(int(data[0]))
     if not channel:
-        print("канал "+ data[0] + " не найден")
+        print("канал " + data[0] + " не найден")
         return
     if not data[0] in channels_messages_ips.keys():
         channels_messages_ips[data[0]] = {}
@@ -42,27 +45,26 @@ async def SendServerStatusMessage(json_data):
         msgcreated = True
     if msgcreated:
         channels_messages_ips[data[0]][data[2]] = str(msg.id)
-        with open("channels_messages_ips.txt", "w",encoding='utf-8') as f:
+        with open("channels_messages_ips.txt", "w", encoding='utf-8') as f:
             f.write(json.dumps(channels_messages_ips))
 
     if msg:
         embed = discord.Embed(color=0x00ff00)
-        embed.set_footer(text = "Актуально на " + datetime.strftime(datetime.now(),"%H:%M:%S %d.%m.%Y") + " (МСК)")
+        embed.set_footer(text="Актуально на " + datetime.strftime(datetime.now(), "%H:%M:%S %d.%m.%Y") + " (МСК)")
         embed.add_field(name="Сервер:", value=data[1], inline=False)
         embed.add_field(name="Карта:", value=data[3], inline=True)
         embed.add_field(name="Вагоны:", value=data[5], inline=True)
-        currentPlayerCount = "0"
-        playersInfo = "\n```"
+        current_player_count = "0"
+        players_info = "\n```"
         if len(data) > 6:
-            currentPlayerCount = str(len(data[6]))
+            current_player_count = str(len(data[6]))
             for ply in (data[6]):
-                playersInfo = playersInfo + ('\n' + ply)
-        playersInfo += "\n```"
-        embed.add_field(name="Игроки:", value=currentPlayerCount + '/' + data[4] + playersInfo, inline=False)
+                players_info = players_info + ('\n' + ply)
+        players_info += "\n```"
+        embed.add_field(name="Игроки:", value=current_player_count + '/' + data[4] + players_info, inline=False)
         embed.add_field(name="IP:", value=data[2], inline=True)
-        embed.add_field(name="Ссылка на подключение:", value="steam://connect/"+data[2], inline=True)
-        await msg.edit(content = "", embed = embed)
-
+        embed.add_field(name="Ссылка на подключение:", value="steam://connect/" + data[2], inline=True)
+        await msg.edit(content="", embed=embed)
 
 
 client = discord.Client()
@@ -79,6 +81,8 @@ with open("channels_messages_ips.txt", file_mode, encoding='utf-8') as read_file
         channels_messages_ips = {}
 
 botReady = False
+
+
 @client.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
@@ -86,20 +90,19 @@ async def on_ready():
     botReady = True
 
 
-
-
 async def echo(websocket, path):
     if not botReady:
         return
     try:
         async for message in websocket:
-            await SendServerStatusMessage(message)
+            await send_server_status_message(message)
     except:
         None
-start_server = websockets.serve(echo, "0.0.0.0", os.environ['PORT'])
+
+
+start_server = websockets.serve(echo, "0.0.0.0", int(os.environ['PORT']))
 asyncio.get_event_loop().run_until_complete(start_server)
 print("server status websocket started")
 # asyncio.get_event_loop().run_forever()
 
-print(7070)
 client.run(os.environ['TOKEN'])
